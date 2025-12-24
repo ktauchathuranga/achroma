@@ -4,5 +4,6 @@
     "uuid": "achroma@ktauchathuranga@gmail.com",
     "version": 1,
     "shell-version": ["49"],
-    "url":  "https://github.com/ktauchathuranga/achroma"
+    "settings-schema": "org.gnome.shell.extensions.achroma",
+    "url": "https://github.com/ktauchathuranga/achroma"
 }
