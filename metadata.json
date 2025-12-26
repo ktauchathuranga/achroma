@@ -1,7 +1,7 @@
 {
     "name": "Achroma",
     "description": "Toggle your display to monochrome/grayscale mode with a single click.  Useful for reducing eye strain, improving focus, or accessibility.",
-    "uuid": "achroma@ktauchathuranga@gmail.com",
+    "uuid": "achroma@ktauchathuranga.github.io",
     "version": 1,
     "shell-version": ["49"],
     "settings-schema": "org.gnome.shell.extensions.achroma",
