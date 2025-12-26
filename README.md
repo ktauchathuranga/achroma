@@ -37,12 +37,12 @@ Useful for reducing eye strain, improving focus, or accessibility.
 
 2. Copy to GNOME extensions directory:
    ```bash
-   cp -r achroma ~/. local/share/gnome-shell/extensions/achroma@ktauchathuranga@gmail.com
+   cp -r achroma ~/. local/share/gnome-shell/extensions/achroma@ktauchathuranga.github.io
    ```
 
 3. Compile the schema:
    ```bash
-   glib-compile-schemas ~/.local/share/gnome-shell/extensions/achroma@ktauchathuranga@gmail.com/schemas/
+   glib-compile-schemas ~/.local/share/gnome-shell/extensions/achroma@ktauchathuranga.github.io/schemas/
    ```
 
 4. Restart GNOME Shell: 
@@ -51,7 +51,7 @@ Useful for reducing eye strain, improving focus, or accessibility.
 
 5. Enable the extension:
    ```bash
-   gnome-extensions enable achroma@ktauchathuranga@gmail.com
+   gnome-extensions enable achroma@ktauchathuranga.github.io
    ```
 
 ## Usage
@@ -65,7 +65,7 @@ Useful for reducing eye strain, improving focus, or accessibility.
 
 Via command line:
 ```bash
-gnome-extensions prefs achroma@ktauchathuranga@gmail.com
+gnome-extensions prefs achroma@ktauchathuranga.github.io
 ```
 
 Or via Extension Manager app:  Click the gear icon next to Achroma. 
@@ -92,7 +92,7 @@ journalctl -f -o cat /usr/bin/gnome-shell
 ### Reloading the extension
 
 ```bash
-gnome-extensions disable achroma@ktauchathuranga@gmail.com && gnome-extensions enable achroma@ktauchathuranga@gmail.com
+gnome-extensions disable achroma@ktauchathuranga.github.io && gnome-extensions enable achroma@ktauchathuranga.github.io
 ```
 
 ## Contributing
