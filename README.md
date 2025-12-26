@@ -32,12 +32,12 @@ Useful for reducing eye strain, improving focus, or accessibility.
 
 1. Clone or download this repository: 
    ```bash
-   git clone https://github.com/ktauchathuranga/achroma. git
+   git clone https://github.com/ktauchathuranga/achroma.git
    ```
 
 2. Copy to GNOME extensions directory:
    ```bash
-   cp -r achroma ~/. local/share/gnome-shell/extensions/achroma@ktauchathuranga.github.io
+   cp -r achroma ~/.local/share/gnome-shell/extensions/achroma@ktauchathuranga.github.io
    ```
 
 3. Compile the schema:
