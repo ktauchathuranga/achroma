@@ -74,21 +74,6 @@ Or via Extension Manager app:  Click the gear icon next to Achroma.
 
 - GNOME Shell 49 or later
 
-## Development
-
-### Testing without logging out
-
-Run a nested GNOME Shell session:
-```bash
-dbus-run-session -- gnome-shell --nested --wayland
-```
-
-### Viewing logs
-
-```bash
-journalctl -f -o cat /usr/bin/gnome-shell
-```
-
 ### Reloading the extension
 
 ```bash
