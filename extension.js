@@ -1,10 +1,10 @@
 'use strict';
 
 import St from 'gi://St';
-import Gio from 'gi://Gio';
-import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
+import GObject from 'gi://GObject';
 
+import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 
@@ -67,7 +67,7 @@ class AchromaIndicator extends PanelMenu.Button {
         });
 
         // Listen for settings changes
-        this._settingsChangedId = this._settings.connect('changed:: current-profile', () => {
+        this._settingsChangedId = this._settings.connect('changed::current-profile', () => {
             if (this._isActive) {
                 this._disableEffect();
                 this._enableEffect();
@@ -184,13 +184,7 @@ class AchromaIndicator extends PanelMenu.Button {
     }
 });
 
-export default class AchromaExtension {
-    constructor(metadata) {
-        this._metadata = metadata;
-        this._indicator = null;
-        this._settings = null;
-    }
-
+export default class AchromaExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
         this._indicator = new AchromaIndicator(this._settings);
@@ -203,28 +197,5 @@ export default class AchromaExtension {
             this._indicator = null;
         }
         this._settings = null;
-    }
-
-    getSettings() {
-        const schema = 'org.gnome.shell.extensions.achroma';
-        const schemaDir = this._metadata.dir.get_child('schemas');
-
-        let schemaSource;
-        if (schemaDir.query_exists(null)) {
-            schemaSource = Gio.SettingsSchemaSource.new_from_directory(
-                schemaDir.get_path(),
-                Gio.SettingsSchemaSource.get_default(),
-                false
-            );
-        } else {
-            schemaSource = Gio.SettingsSchemaSource.get_default();
-        }
-
-        const schemaObj = schemaSource.lookup(schema, true);
-        if (!schemaObj) {
-            throw new Error(`Schema ${schema} not found`);
-        }
-
-        return new Gio.Settings({settings_schema: schemaObj});
     }
 }
