@@ -25,7 +25,7 @@ Useful for reducing eye strain, improving focus, or accessibility.
 
 ### From GNOME Extensions Website
 
-1. Visit [Achroma on extensions.gnome.org](https://extensions.gnome.org/extension/achroma)
+1. Visit [Achroma on extensions.gnome.org](https://extensions.gnome.org/extension/9061/achroma/)
 2. Click the toggle to install
 
 ### Manual Installation
