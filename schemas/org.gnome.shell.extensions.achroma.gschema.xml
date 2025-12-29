@@ -6,5 +6,20 @@
       <summary>Current Profile</summary>
       <description>The currently selected monochrome profile</description>
     </key>
+    <key name="custom-profiles" type="s">
+      <default>'[]'</default>
+      <summary>Custom User Profiles</summary>
+      <description>JSON string containing user defined profiles</description>
+    </key>
+    <key name="is-previewing" type="b">
+      <default>false</default>
+      <summary>Preview Mode Active</summary>
+      <description>Whether the user is currently editing a profile</description>
+    </key>
+    <key name="preview-profile" type="s">
+      <default>'{}'</default>
+      <summary>Live Preview Data</summary>
+      <description>Temporary storage for the profile currently being edited</description>
+    </key>
   </schema>
 </schemalist>
