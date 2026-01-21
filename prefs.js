@@ -5,15 +5,10 @@ import Adw from 'gi://Adw';
 import Gdk from 'gi://Gdk';
 import GLib from 'gi://GLib';
 
-import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const DEFAULT_PROFILES = {
-    'grayscale': 'Grayscale',
-    'soft':  'Soft',
-    'high-contrast': 'High Contrast',
-    'low-brightness': 'Low Brightness',
-    'sepia': 'Sepia'
-};
+import { DEFAULT_PROFILE_NAMES } from './profiles.js';
+
 
 export default class AchromaPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
@@ -45,17 +40,19 @@ export default class AchromaPreferences extends ExtensionPreferences {
         const comboRow = new Adw.ComboRow({ title: 'Current Profile' });
         selectionGroup.add(comboRow);
 
+        // Track rows for proper cleanup
+        let customRows = [];
+
         // Helper to refresh list
         const updateCustomList = () => {
-            let child = customGroup.get_first_child(); 
-            while(child) {
-               const next = child.get_next_sibling();
-               customGroup.remove(child);
-               child = next;
-            }
+            // Remove previously added rows
+            customRows.forEach(row => {
+                customGroup.remove(row);
+            });
+            customRows = [];
 
             const profiles = this._getCustomProfiles(settings);
-            
+
             // Existing Profiles
             profiles.forEach((p, index) => {
                 const row = new Adw.ActionRow({ title: p.name });
@@ -65,13 +62,15 @@ export default class AchromaPreferences extends ExtensionPreferences {
                 });
                 delBtn.add_css_class('destructive-action');
                 delBtn.connect('clicked', () => {
-                    profiles.splice(index, 1);
-                    settings.set_string('custom-profiles', JSON.stringify(profiles));
+                    const currentProfiles = this._getCustomProfiles(settings);
+                    currentProfiles.splice(index, 1);
+                    settings.set_string('custom-profiles', JSON.stringify(currentProfiles));
                     updateCustomList();
                     this._refreshCombo(settings, comboRow);
                 });
                 row.add_suffix(delBtn);
                 customGroup.add(row);
+                customRows.push(row);
             });
 
             // "New Profile" Button
@@ -89,6 +88,7 @@ export default class AchromaPreferences extends ExtensionPreferences {
                 });
             });
             customGroup.add(addRow);
+            customRows.push(addRow);
         };
 
         // Init
@@ -97,7 +97,7 @@ export default class AchromaPreferences extends ExtensionPreferences {
 
         comboRow.connect('notify::selected', () => {
             const model = comboRow.get_model();
-            if(!model) return;
+            if (!model) return;
             const item = model.get_item(comboRow.get_selected());
             if (item) settings.set_string('current-profile', item.get_string());
         });
@@ -106,18 +106,18 @@ export default class AchromaPreferences extends ExtensionPreferences {
     _getCustomProfiles(settings) {
         try {
             return JSON.parse(settings.get_string('custom-profiles'));
-        } catch(e) { return []; }
+        } catch (e) { return []; }
     }
 
     _refreshCombo(settings, comboRow) {
         const model = new Gtk.StringList();
         const custom = this._getCustomProfiles(settings);
-        
-        for (const key of Object.keys(DEFAULT_PROFILES)) model.append(key);
+
+        for (const key of Object.keys(DEFAULT_PROFILE_NAMES)) model.append(key);
         for (const p of custom) model.append(p.id);
 
         comboRow.set_model(model);
-        
+
         const current = settings.get_string('current-profile');
         let found = false;
         for (let i = 0; i < model.get_n_items(); i++) {
@@ -157,7 +157,7 @@ export default class AchromaPreferences extends ExtensionPreferences {
                 spacing: 12,
                 margin_top: 24, margin_bottom: 24, margin_start: 24, margin_end: 24
             });
-            
+
             scrolled.set_child(content);
             box.append(scrolled);
             dialog.set_child(box);
@@ -183,7 +183,7 @@ export default class AchromaPreferences extends ExtensionPreferences {
             // Exposure
             const bcGroup = new Adw.PreferencesGroup({ title: 'Exposure' });
             content.append(bcGroup);
-            
+
             const brightScale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, -1.0, 1.0, 0.05);
             brightScale.set_value(0.0);
             brightScale.set_hexpand(true);
@@ -207,10 +207,10 @@ export default class AchromaPreferences extends ExtensionPreferences {
             // --- CHANGED: Use Standard Gtk.ColorButton ---
             const colorBtn = new Gtk.ColorButton();
             const defRgba = new Gdk.RGBA();
-            defRgba.parse('rgba(255, 220, 180, 1)'); 
+            defRgba.parse('rgba(255, 220, 180, 1)');
             colorBtn.set_rgba(defRgba);
             colorBtn.set_valign(Gtk.Align.CENTER);
-            
+
             const colorRow = new Adw.ActionRow({ title: 'Tint Color' });
             colorRow.add_suffix(colorBtn);
             tintGroup.add(colorRow);
@@ -229,14 +229,14 @@ export default class AchromaPreferences extends ExtensionPreferences {
 
             const cancelBtn = new Gtk.Button({ label: 'Cancel' });
             cancelBtn.connect('clicked', () => {
-                dialog.close(); 
+                dialog.close();
             });
             actionBar.pack_start(cancelBtn);
 
             const saveBtn = new Gtk.Button({ label: 'Save Profile' });
             saveBtn.add_css_class('suggested-action');
-            saveBtn.set_sensitive(false); 
-            
+            saveBtn.set_sensitive(false);
+
             nameEntry.connect('notify::text', () => {
                 saveBtn.set_sensitive(nameEntry.get_text().length > 0);
             });
@@ -267,8 +267,8 @@ export default class AchromaPreferences extends ExtensionPreferences {
             // Throttled update function
             let updateSourceId = 0;
             const updatePreview = () => {
-                if (updateSourceId > 0) return; 
-                
+                if (updateSourceId > 0) return;
+
                 updateSourceId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 30, () => {
                     const data = gatherData();
                     settings.set_string('preview-profile', JSON.stringify(data));
@@ -281,7 +281,7 @@ export default class AchromaPreferences extends ExtensionPreferences {
                 const active = tintSwitchRow.get_active();
                 colorRow.set_sensitive(active);
                 alphaRow.set_sensitive(active);
-                updatePreview(); 
+                updatePreview();
             };
             tintSwitchRow.connect('notify::active', updateTintVis);
             updateTintVis();
@@ -292,16 +292,16 @@ export default class AchromaPreferences extends ExtensionPreferences {
             contrastScale.connect('value-changed', updatePreview);
             alphaScale.connect('value-changed', updatePreview);
             // --- CHANGED: Listener for ColorButton ---
-            colorBtn.connect('color-set', updatePreview); 
+            colorBtn.connect('color-set', updatePreview);
             // -----------------------------------------
 
             saveBtn.connect('clicked', () => {
                 const name = nameEntry.get_text();
-                if (!name) return; 
+                if (!name) return;
 
                 const id = 'custom-' + Math.random().toString(36).substr(2, 9);
-                const data = gatherData(); 
-                
+                const data = gatherData();
+
                 const newProfile = {
                     id: id,
                     name: name,
@@ -315,9 +315,9 @@ export default class AchromaPreferences extends ExtensionPreferences {
                 const custom = this._getCustomProfiles(settings);
                 custom.push(newProfile);
                 settings.set_string('custom-profiles', JSON.stringify(custom));
-                
+
                 settings.set_boolean('is-previewing', false);
-                
+
                 callback();
                 dialog.destroy();
             });
