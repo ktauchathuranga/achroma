@@ -204,11 +204,13 @@ export default class AchromaPreferences extends ExtensionPreferences {
             const tintSwitchRow = new Adw.SwitchRow({ title: 'Enable Color Tint' });
             tintGroup.add(tintSwitchRow);
 
-            // --- CHANGED: Use Standard Gtk.ColorButton ---
-            const colorBtn = new Gtk.ColorButton();
             const defRgba = new Gdk.RGBA();
             defRgba.parse('rgba(255, 220, 180, 1)');
-            colorBtn.set_rgba(defRgba);
+            const colorDialog = new Gtk.ColorDialog({ with_alpha: true });
+            const colorBtn = new Gtk.ColorDialogButton({
+                dialog: colorDialog,
+                rgba: defRgba,
+            });
             colorBtn.set_valign(Gtk.Align.CENTER);
 
             const colorRow = new Adw.ActionRow({ title: 'Tint Color' });
@@ -247,7 +249,6 @@ export default class AchromaPreferences extends ExtensionPreferences {
                 const tintEnabled = tintSwitchRow.get_active();
                 let tintObj = null;
                 if (tintEnabled) {
-                    // --- CHANGED: Get color from ColorButton ---
                     const c = colorBtn.get_rgba();
                     tintObj = {
                         r: Math.round(c.red * 255),
@@ -291,9 +292,7 @@ export default class AchromaPreferences extends ExtensionPreferences {
             brightScale.connect('value-changed', updatePreview);
             contrastScale.connect('value-changed', updatePreview);
             alphaScale.connect('value-changed', updatePreview);
-            // --- CHANGED: Listener for ColorButton ---
-            colorBtn.connect('color-set', updatePreview);
-            // -----------------------------------------
+            colorBtn.connect('notify::rgba', updatePreview);
 
             saveBtn.connect('clicked', () => {
                 const name = nameEntry.get_text();

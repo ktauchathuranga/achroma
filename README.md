@@ -72,7 +72,7 @@ Or via Extension Manager app:  Click the gear icon next to Achroma.
 
 ## Requirements
 
-- GNOME Shell 49 or later
+- GNOME Shell 50 or later
 
 ### Reloading the extension
 
